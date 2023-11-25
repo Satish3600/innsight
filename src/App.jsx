@@ -3,16 +3,14 @@ import axios from "axios";
 import starwarImage from "./assets/starwarimg.jpg";
 import "./App.css";
 
-
-
 function App() {
   const [cards, setCards] = useState([]);
   const [filmNames, setFilmNames] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentCard, setCurrentCard] = useState([]);
   const [pages, setPages] = useState(1);
-  const [count, setCount] = useState(3);
-  const [totalReacords, setTotalRecords] = useState(1);
+  const [count, setCount] = useState(4);
+  const [totalReacords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     fetchFilms();
@@ -39,11 +37,7 @@ function App() {
         `https://swapi.dev/api/people/?page=${page}`
       );
       setIsLoading(false);
-      setTotalRecords(
-        count > totalReacords
-          ? totalReacords + response.data.results.length
-          : response.data.results.length
-      );
+      setTotalRecords(totalReacords + response.data.results.length)
       const initialCharacters = response.data.results.map((x) => {
         const filmNames = [];
         if (x.films.length > 0) {
@@ -57,12 +51,12 @@ function App() {
         return { ...x, filmNames };
       });
       setCards(
-        count == 3
+        count==4
           ? [...initialCharacters.slice(0, 3)]
-          : [...cards, ...initialCharacters[0]]
+          : [...cards, initialCharacters[0]]
       );
       setCurrentCard(
-        count == 3
+        count==4
           ? [...initialCharacters.slice(3)]
           : [...initialCharacters.slice(1)]
       );
@@ -74,13 +68,9 @@ function App() {
   const addCard = () => {
     setCount((preVal) => preVal + 1);
     if (count > totalReacords) {
-      // alert("if")
       setPages(pages + 1);
       fetchInitialData(filmNames,pages + 1);
     } else {
-      // console.log("else")
-      console.log("count" , count)
-      console.log("totalReacords" , totalReacords)
       setCards([...cards, currentCard[0]]);
       setCurrentCard(currentCard.splice(1));
     }
